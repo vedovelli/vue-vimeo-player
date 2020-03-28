@@ -1,28 +1,28 @@
-import Player from '@vimeo/player'
-import assign from 'object-assign'
+import Player from "@vimeo/player";
+import assign from "object-assign";
 
-let pid = 0
+let pid = 0;
 
-function emitVueEvent (event) {
-  this.player.on(event, (data) => {
-    this.$emit(event, data, this.player)
-  })
+function emitVueEvent(event) {
+  this.player.on(event, data => {
+    this.$emit(event, data, this.player);
+  });
 }
 
 const eventsToEmit = [
-  'play',
-  'pause',
-  'ended',
-  'timeupdate',
-  'progress',
-  'seeked',
-  'texttrackchange',
-  'cuechange',
-  'cuepoint',
-  'volumechange',
-  'error',
-  'loaded'
-]
+  "play",
+  "pause",
+  "ended",
+  // 'timeupdate',
+  // 'progress',
+  "seeked",
+  "texttrackchange",
+  "cuechange",
+  "cuepoint",
+  "volumechange",
+  "error",
+  "loaded"
+];
 // @vue/component
 export default {
   props: {
@@ -51,19 +51,19 @@ export default {
       default: true
     }
   },
-  render (h) {
-    return h('div', { attrs: { id: this.elementId } })
+  render(h) {
+    return h("div", { attrs: { id: this.elementId } });
   },
   watch: {
-    videoId: 'update'
+    videoId: "update"
   },
-  data () {
-    pid += 1
+  data() {
+    pid += 1;
 
     return {
       elementId: `vimeo-player-${pid}`,
       player: null
-    }
+    };
   },
   methods: {
     /**
@@ -72,36 +72,37 @@ export default {
      * @param {Number} videoId
      * @return {LoadVideoPromise}
      */
-    update (videoId) {
-      return this.player.loadVideo(videoId)
+    update(videoId) {
+      return this.player.loadVideo(videoId);
     },
-    play () {
-      return this.player.play()
+    play() {
+      return this.player.play();
     },
-    pause () {
-      return this.player.pause()
+    pause() {
+      return this.player.pause();
     },
-    mute () {
-      return this.player.setVolume(0)
+    mute() {
+      return this.player.setVolume(0);
     },
-    unmute (volume = 0.5) {
-      return this.player.setVolume(volume)
+    unmute(volume = 0.5) {
+      return this.player.setVolume(volume);
     },
-    setEvents () {
-      const vm = this
+    setEvents() {
+      const vm = this;
 
-      this.player.ready()
-        .then(function () {
-          vm.$emit('ready', vm.player)
+      this.player
+        .ready()
+        .then(function() {
+          vm.$emit("ready", vm.player);
         })
-        .catch((error) => {
-          vm.$emit('error', error, vm.player)
-        })
+        .catch(error => {
+          vm.$emit("error", error, vm.player);
+        });
 
-      eventsToEmit.forEach(event => emitVueEvent.call(vm, event))
+      eventsToEmit.forEach(event => emitVueEvent.call(vm, event));
     }
   },
-  mounted () {
+  mounted() {
     const options = {
       id: this.videoId,
       width: this.playerWidth,
@@ -109,14 +110,16 @@ export default {
       loop: this.loop,
       autoplay: this.autoplay,
       controls: this.controls
+    };
+    if (this.videoUrl) {
+      options.url = this.videoUrl;
     }
-    if (this.videoUrl) { options.url = this.videoUrl }
 
-    this.player = new Player(this.elementId, assign(options, this.options))
+    this.player = new Player(this.elementId, assign(options, this.options));
 
-    this.setEvents()
+    this.setEvents();
   },
-  beforeDestroy () {
-    this.player.unload()
+  beforeDestroy() {
+    this.player.unload();
   }
-}
+};
