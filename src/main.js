@@ -52,7 +52,7 @@ export default {
     }
   },
   render(h) {
-    return h("div", { attrs: { id: this.elementId } });
+    return h("div", { attrs: { id: this.elementId, class: "vimeo-player" } });
   },
   watch: {
     videoId: "update"
